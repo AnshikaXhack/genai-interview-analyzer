@@ -349,8 +349,9 @@ return report
 
 
 // PDF generator (fail-safe for Render)
+const puppeteer = require("puppeteer");
+
 async function generatePdfFromHtml(htmlContent) {
-  // Launch Puppeteer with proper Render args
   const browser = await puppeteer.launch({
     headless: true,
     args: [
@@ -359,23 +360,21 @@ async function generatePdfFromHtml(htmlContent) {
       "--disable-dev-shm-usage",
       "--disable-gpu"
     ],
-    executablePath: puppeteer.executablePath() // ensures Puppeteer uses its downloaded Chromium
-  })
+    // Use the Chromium installed by apt-get
+    executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium-browser"
+  });
 
-  const page = await browser.newPage()
+  const page = await browser.newPage();
+  await page.setContent(htmlContent, { waitUntil: "networkidle0", timeout: 60000 });
 
-  // Wait until network is idle
-  await page.setContent(htmlContent, { waitUntil: "networkidle0", timeout: 60000 })
-
-  // Generate PDF
   const pdfBuffer = await page.pdf({
     format: "A4",
     margin: { top: "20mm", bottom: "20mm", left: "15mm", right: "15mm" },
     printBackground: true
-  })
+  });
 
-  await browser.close()
-  return pdfBuffer
+  await browser.close();
+  return pdfBuffer;
 }
 
 // Generate Resume PDF from AI HTML
