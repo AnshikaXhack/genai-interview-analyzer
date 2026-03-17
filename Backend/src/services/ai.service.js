@@ -197,7 +197,7 @@ return report
 async function generatePdfFromHtml(htmlContent) {
 
   const browser = await puppeteer.launch({
-    headless: "new",
+    headless: true,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -291,9 +291,17 @@ Return ONLY JSON like this:
 
  console.log("AI RAW RESPONSE:", response.text)
 
- const jsonContent = JSON.parse(response.text)
+let jsonContent
 
- const pdfBuffer = await generatePdfFromHtml(jsonContent.html)
+try {
+  jsonContent = JSON.parse(response.text)
+} catch (err) {
+  console.error("Invalid AI JSON:", response.text)
+  throw new Error("AI returned invalid JSON for resume")
+}
+const htmlContent = jsonContent.html.substring(0, 15000)
+
+const pdfBuffer = await generatePdfFromHtml(htmlContent)
 
  return pdfBuffer
 
