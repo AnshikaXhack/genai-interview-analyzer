@@ -349,7 +349,7 @@ return report
 
 
 // PDF generator (fail-safe for Render)
-const puppeteer = require("puppeteer");
+
 
 async function generatePdfFromHtml(htmlContent) {
   const browser = await puppeteer.launch({
