@@ -371,3 +371,124 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
         }
     }
 }
+// ─────────────────────────────────────────────
+// 📱 TABLET (≤ 1024px)
+// ─────────────────────────────────────────────
+@media (max-width: 1024px) {
+  .home-page {
+    padding: 2rem 1rem;
+  }
+
+  .interview-card {
+    max-width: 100%;
+  }
+
+  .interview-card__body {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .panel-divider {
+    display: none;
+  }
+
+  .panel {
+    padding: 1.25rem;
+  }
+
+  .recent-reports .reports-list {
+    flex-direction: column;
+  }
+}
+
+// ─────────────────────────────────────────────
+// 📱 MOBILE (≤ 768px)
+// ─────────────────────────────────────────────
+@media (max-width: 768px) {
+  .page-header {
+    h1 {
+      font-size: 1.75rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
+
+  .interview-card__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+
+    .footer-info {
+      text-align: center;
+    }
+  }
+
+  .generate-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .panel__header {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .dropzone {
+    padding: 1.2rem 0.75rem;
+  }
+
+  .panel__textarea {
+    font-size: 0.85rem;
+  }
+
+  .panel--left .char-counter {
+    right: 1.25rem;
+    bottom: 1.5rem;
+    font-size: 0.7rem;
+  }
+
+  .page-footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+// ─────────────────────────────────────────────
+// 📱 SMALL MOBILE (≤ 480px)
+// ─────────────────────────────────────────────
+@media (max-width: 480px) {
+  .home-page {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .panel {
+    padding: 1rem;
+  }
+
+  .panel__textarea {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .dropzone__title {
+    font-size: 0.8rem;
+  }
+
+  .dropzone__subtitle {
+    font-size: 0.7rem;
+  }
+
+  .info-box p {
+    font-size: 0.75rem;
+  }
+
+  .report-item {
+    padding: 0.75rem;
+  }
+}

@@ -174,25 +174,55 @@ return report
 
 
 
+// async function generatePdfFromHtml(htmlContent) {
+//    const browser = await puppeteer.launch({
+//   args: ["--no-sandbox", "--disable-setuid-sandbox"]
+// })
+//     const page = await browser.newPage();
+//     await page.setContent(htmlContent, { waitUntil: "networkidle0" })
+
+//     const pdfBuffer = await page.pdf({
+//         format: "A4", margin: {
+//             top: "20mm",
+//             bottom: "20mm",
+//             left: "15mm",
+//             right: "15mm"
+//         }
+//     })
+
+//     await browser.close()
+
+//     return pdfBuffer
+// }
 async function generatePdfFromHtml(htmlContent) {
-   const browser = await puppeteer.launch({
-  args: ["--no-sandbox", "--disable-setuid-sandbox"]
-})
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" })
 
-    const pdfBuffer = await page.pdf({
-        format: "A4", margin: {
-            top: "20mm",
-            bottom: "20mm",
-            left: "15mm",
-            right: "15mm"
-        }
-    })
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu"
+    ]
+  })
 
-    await browser.close()
+  const page = await browser.newPage()
 
-    return pdfBuffer
+  await page.setContent(htmlContent, { waitUntil: "networkidle0" })
+
+  const pdfBuffer = await page.pdf({
+    format: "A4",
+    margin: {
+      top: "20mm",
+      bottom: "20mm",
+      left: "15mm",
+      right: "15mm"
+    }
+  })
+
+  await browser.close()
+
+  return pdfBuffer
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
