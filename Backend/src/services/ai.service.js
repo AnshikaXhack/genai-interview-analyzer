@@ -34,45 +34,80 @@ const interviewReportSchema = z.object({
 
 
 
-function sanitizeReport(report) {
+// function sanitizeReport(report) {
 
+//   if (Array.isArray(report.technicalQuestions)) {
+//     report.technicalQuestions = report.technicalQuestions.map(q =>
+//       typeof q === "string"
+//         ? {
+//             question: q,
+//             intention: "Evaluate the candidate's technical understanding.",
+//             answer: "Explain the concept clearly with real examples and trade-offs."
+//           }
+//         : q
+//     )
+//   }
+
+//   if (Array.isArray(report.behavioralQuestions)) {
+//     report.behavioralQuestions = report.behavioralQuestions.map(q =>
+//       typeof q === "string"
+//         ? {
+//             question: q,
+//             intention: "Understand candidate's behaviour and teamwork ability.",
+//             answer: "Use the STAR method (Situation, Task, Action, Result)."
+//           }
+//         : q
+//     )
+//   }
+
+//   if (Array.isArray(report.skillGaps)) {
+//     report.skillGaps = report.skillGaps.map(s =>
+//       typeof s === "string"
+//         ? { skill: s, severity: "medium" }
+//         : s
+//     )
+//   }
+
+//   if (Array.isArray(report.preparationPlan)) {
+//     report.preparationPlan = report.preparationPlan.map((p, i) =>
+//       typeof p === "string"
+//         ? { day: i + 1, focus: p, tasks: ["Study topic", "Practice questions"] }
+//         : p
+//     )
+//   }
+
+//   return report
+// }
+function sanitizeReport(report) {
   if (Array.isArray(report.technicalQuestions)) {
     report.technicalQuestions = report.technicalQuestions.map(q =>
-      typeof q === "string"
-        ? {
-            question: q,
-            intention: "Evaluate the candidate's technical understanding.",
-            answer: "Explain the concept clearly with real examples and trade-offs."
-          }
-        : q
+      typeof q === "string" ? {
+        question: q,
+        intention: "Evaluate the candidate's technical understanding.",
+        answer: "Explain clearly with examples and trade-offs."
+      } : q
     )
   }
 
   if (Array.isArray(report.behavioralQuestions)) {
     report.behavioralQuestions = report.behavioralQuestions.map(q =>
-      typeof q === "string"
-        ? {
-            question: q,
-            intention: "Understand candidate's behaviour and teamwork ability.",
-            answer: "Use the STAR method (Situation, Task, Action, Result)."
-          }
-        : q
+      typeof q === "string" ? {
+        question: q,
+        intention: "Understand candidate's behaviour and teamwork ability.",
+        answer: "Use STAR method (Situation, Task, Action, Result)."
+      } : q
     )
   }
 
   if (Array.isArray(report.skillGaps)) {
     report.skillGaps = report.skillGaps.map(s =>
-      typeof s === "string"
-        ? { skill: s, severity: "medium" }
-        : s
+      typeof s === "string" ? { skill: s, severity: "medium" } : s
     )
   }
 
   if (Array.isArray(report.preparationPlan)) {
     report.preparationPlan = report.preparationPlan.map((p, i) =>
-      typeof p === "string"
-        ? { day: i + 1, focus: p, tasks: ["Study topic", "Practice questions"] }
-        : p
+      typeof p === "string" ? { day: i + 1, focus: p.split(":")[0], tasks: [p.split(":")[1]?.trim() || "Study topic"] } : p
     )
   }
 
