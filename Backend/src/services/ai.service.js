@@ -1,7 +1,8 @@
 const { GoogleGenAI } = require("@google/genai")
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
-const puppeteer = require("puppeteer")
+const puppeteer = require("puppeteer-core")
+const chromium = require("@sparticuz/chromium")
 async function callAIWithRetry(fn, retries = 3) {
   for (let i = 0; i < retries; i++) {
     try {
@@ -367,33 +368,31 @@ return report
 
 
 async function generatePdfFromHtml(htmlContent) {
-  
-   
-  const browser = await puppeteer.launch({
-    headless: true,
-     
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu"
-    ],
-    
-  });
+  const isProd = process.env.NODE_ENV === "production"
 
-  const page = await browser.newPage();
-  await page.setContent(htmlContent, { waitUntil: "networkidle0", timeout: 60000 });
+  const browser = await puppeteer.launch({
+    args: isProd ? chromium.args : [],
+    defaultViewport: chromium.defaultViewport,
+    executablePath: isProd
+      ? await chromium.executablePath()
+      : undefined,
+    headless: true,
+  })
+
+  const page = await browser.newPage()
+
+  await page.setContent(htmlContent, {
+    waitUntil: "networkidle0",
+  })
 
   const pdfBuffer = await page.pdf({
     format: "A4",
-    margin: { top: "20mm", bottom: "20mm", left: "15mm", right: "15mm" },
     printBackground: true
-  });
+  })
 
-  await browser.close();
-  return pdfBuffer;
+  await browser.close()
+  return pdfBuffer
 }
-
 // Generate Resume PDF from AI HTML
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
   const resumePdfSchema = z.object({
