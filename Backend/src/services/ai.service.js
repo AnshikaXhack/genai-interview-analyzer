@@ -361,7 +361,7 @@ async function generatePdfFromHtml(htmlContent) {
       "--disable-gpu"
     ],
     // Use the Chromium installed by apt-get
-    executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium-browser"
+    executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium"
   });
 
   const page = await browser.newPage();
