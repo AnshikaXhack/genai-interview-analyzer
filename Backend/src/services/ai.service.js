@@ -352,8 +352,11 @@ return report
 
 
 async function generatePdfFromHtml(htmlContent) {
+   console.log("Puppeteer executable path:", puppeteer.executablePath())
+   
   const browser = await puppeteer.launch({
     headless: true,
+     executablePath: puppeteer.executablePath(),
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
