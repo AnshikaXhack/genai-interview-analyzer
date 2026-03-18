@@ -2,6 +2,20 @@ const { GoogleGenAI } = require("@google/genai")
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
 const puppeteer = require("puppeteer")
+async function callAIWithRetry(fn, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn()
+    } catch (err) {
+      if (err.status === 503 && i < retries - 1) {
+        console.log("Retrying AI...")
+        await new Promise(r => setTimeout(r, 2000))
+      } else {
+        throw err
+      }
+    }
+  }
+}
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
@@ -172,7 +186,8 @@ IMPORTANT:
 
 Return ONLY JSON.
 `;
-    const response = await ai.models.generateContent({
+    const response = await callAIWithRetry(() =>
+  ai.models.generateContent({
         model: "gemini-2.5-flash-lite",
         contents: prompt,
         
@@ -180,7 +195,7 @@ Return ONLY JSON.
             responseMimeType: "application/json",
             responseSchema: zodToJsonSchema(interviewReportSchema),
         }
-    })
+    }))
 console.log("AI RAW RESPONSE:", response.text)
 
 let rawResponse
@@ -356,7 +371,7 @@ async function generatePdfFromHtml(htmlContent) {
    
   const browser = await puppeteer.launch({
     headless: true,
-     executablePath: puppeteer.executablePath(),
+     
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -411,14 +426,15 @@ Return ONLY JSON like this:
 `
 
   // Call Google Gemini AI
-  const response = await ai.models.generateContent({
+  const response = await callAIWithRetry(() =>
+  ai.models.generateContent({
     model: "gemini-2.5-flash-lite",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
       responseSchema: zodToJsonSchema(resumePdfSchema)
     }
-  })
+  }))
 
   // Parse AI JSON safely
   let jsonContent
@@ -430,7 +446,7 @@ Return ONLY JSON like this:
   }
 
   // Truncate huge HTML to prevent Puppeteer crash
-  const htmlContent = jsonContent.html.substring(0, 15000)
+  const htmlContent = jsonContent.html
 
   // Generate PDF safely
   const pdfBuffer = await generatePdfFromHtml(htmlContent)
